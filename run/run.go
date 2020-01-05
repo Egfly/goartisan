@@ -4,7 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"goartisan/config"
+	"github.com/Egfly/goartisan/config"
 	"io"
 )
 

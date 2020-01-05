@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
-	"goartisan/run"
+	"github.com/Egfly/goartisan/run"
 	"io"
 	"os"
 	"strings"

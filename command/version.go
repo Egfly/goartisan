@@ -1,6 +1,6 @@
 package command
 
-import "goartisan/config"
+import "github.com/Egfly/goartisan/config"
 
 type VersionCommand struct {
 	Command
