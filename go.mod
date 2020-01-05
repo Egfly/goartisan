@@ -1,3 +1,3 @@
-module github.com/Egfly/goartisan
+module goartisan
 
 go 1.13
