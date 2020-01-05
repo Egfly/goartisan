@@ -57,7 +57,8 @@ func Run(w io.Writer, appArgs []string) (string, error) {
 }
 
 func (r *runner) run(ref reflect.Value) (string, error) {
-	var returns []reflect.Value
-	ref.MethodByName("Handle").Call(returns)
-	return "", nil
+
+	result := ref.MethodByName("Handle").Call(nil)
+
+	return result[0].String(), nil
 }

@@ -13,7 +13,7 @@ func (v *VersionCommand) Handle() (str string, err error) {
 	return str, nil
 }
 
-func (v *VersionCommand) New() (version *VersionCommand, err error) {
+func NewVersion() (version *VersionCommand) {
 	version = &VersionCommand{}
 	version.SetSignature("version")
 	version.SetDescription("show go artisan version")
