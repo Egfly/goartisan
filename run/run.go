@@ -39,7 +39,7 @@ func Run(w io.Writer, appArgs []string) (string, error) {
 	cmdList := LoadCommandList()
 	for sig, v := range cmdList {
 		if sig == args[0] {
-			cmd = &v
+			cmd = v
 		}
 	}
 	val := reflect.ValueOf(cmd)
