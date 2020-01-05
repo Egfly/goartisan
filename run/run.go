@@ -1,11 +1,10 @@
 package run
 
 import (
-	"context"
 	"flag"
-	"fmt"
 	"github.com/Egfly/goartisan/config"
 	"io"
+	"reflect"
 )
 
 type nullIo struct{}
@@ -14,12 +13,13 @@ func (ni nullIo) Write(p []byte) (n int, err error) {
 	return len(p), nil
 }
 
-func init() {
-	fmt.Println("this is init func")
+type runner struct {
+	args []string
 }
 
-type runner struct {
-	ctx *context.Context
+func LoadCommandList() (list map[string]interface{}) {
+	list = config.CmdList
+	return
 }
 
 func Run(w io.Writer, appArgs []string) (string, error) {
@@ -28,31 +28,36 @@ func Run(w io.Writer, appArgs []string) (string, error) {
 	}
 
 	flags := flag.NewFlagSet("goartisan", flag.ContinueOnError)
-	//licenses := flags.Bool("govendor-licenses", false, "show govendor's licenses")
-	version := flags.Bool("version", false, "show goartisan version")
 	flags.SetOutput(nullIo{})
 	err := flags.Parse(appArgs[1:])
 	if err != nil {
 		return "help info", err
 	}
 
-	if version != nil {
-		return config.Version, nil
+	args := flags.Args()
+	var cmd interface{}
+	cmdList := LoadCommandList()
+	for sig, v := range cmdList {
+		if sig == args[0] {
+			cmd = v
+		}
+	}
+	val := reflect.ValueOf(cmd)
+	kd := val.Elem().Kind()
+	if kd != reflect.Struct {
+		msg := args[0] + "not found"
+		return msg, nil
 	}
 
-	args := flags.Args()
-	cmd := args[0]
-	r := &runner{}
-	//switch cmd {
-	//case "version":
-	//	return "v1.0.0.0", nil
-	//default:
-	//	return "", fmt.Errorf("Unknown command %q", cmd)
-	//}
-
-	return r.run(cmd, args[1:])
+	args = args[1:]
+	r := &runner{
+		args: args,
+	}
+	return r.run(val)
 }
 
-func (r *runner) run(signature string, args []string) (string, error) {
-
+func (r *runner) run(ref reflect.Value) (string, error) {
+	var returns []reflect.Value
+	ref.MethodByName("Handle").Call(returns)
+	return "", nil
 }
