@@ -2,9 +2,9 @@ package run
 
 import (
 	"flag"
-	"fmt"
 	"github.com/Egfly/goartisan/config"
 	"io"
+	"os"
 	"path/filepath"
 	"reflect"
 )
@@ -21,8 +21,14 @@ type runner struct {
 
 func LoadCommandList(arg string) (list map[string]interface{}) {
 	list = config.CmdList
+	// todo 获取文件路径err处理
 	dir, _ := filepath.Abs(filepath.Dir(arg))
-	fmt.Println(dir)
+	// todo 操作系统判断，拼接不同的config路径
+	dir = dir + "\\config\\goartisan.go"
+	_, err := os.Lstat(dir)
+	if !os.IsNotExist(err) { //判断文件是否存在
+		// 将config下goartisan.go编译成so文件
+	}
 	return
 }
 
