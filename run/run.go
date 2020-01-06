@@ -2,8 +2,10 @@ package run
 
 import (
 	"flag"
+	"fmt"
 	"github.com/Egfly/goartisan/config"
 	"io"
+	"path/filepath"
 	"reflect"
 )
 
@@ -17,12 +19,15 @@ type runner struct {
 	args []string
 }
 
-func LoadCommandList() (list map[string]interface{}) {
+func LoadCommandList(arg string) (list map[string]interface{}) {
 	list = config.CmdList
+	dir, _ := filepath.Abs(filepath.Dir(arg))
+	fmt.Println(dir)
 	return
 }
 
 func Run(w io.Writer, appArgs []string) (string, error) {
+	cmdList := LoadCommandList(appArgs[0])
 	if len(appArgs) == 1 {
 		return "no command", nil
 	}
@@ -36,7 +41,7 @@ func Run(w io.Writer, appArgs []string) (string, error) {
 
 	args := flags.Args()
 	var cmd interface{}
-	cmdList := LoadCommandList()
+
 	for sig, v := range cmdList {
 		if sig == args[0] {
 			cmd = v
