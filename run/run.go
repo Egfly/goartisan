@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"plugin"
 	"reflect"
 )
 
@@ -28,6 +29,19 @@ func LoadCommandList(arg string) (list map[string]interface{}) {
 	_, err := os.Lstat(dir)
 	if !os.IsNotExist(err) { //判断文件是否存在
 		// 将config下goartisan.go编译成so文件
+		p, err := plugin.Open("./config/goartisan.so")
+		if err != nil {
+			panic(err)
+		}
+		cl, err := p.Lookup("CommandList")
+		if err != nil {
+			panic(err)
+		}
+		res := cl.(*map[string]interface{})
+		for k, v := range *res {
+			list[k] = v
+		}
+
 	}
 	return
 }
