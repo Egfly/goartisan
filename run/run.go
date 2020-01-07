@@ -2,6 +2,7 @@ package run
 
 import (
 	"flag"
+	"fmt"
 	"github.com/Egfly/goartisan/config"
 	"io"
 	"os"
@@ -43,7 +44,7 @@ func LoadCommandList(arg string) (list map[string]interface{}) {
 	for k, v := range *res {
 		list[k] = v
 	}
-
+	fmt.Println(list)
 	//}
 	return
 }
