@@ -6,6 +6,7 @@ import (
 	"github.com/Egfly/goartisan/config"
 	"io"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"plugin"
 	"reflect"
@@ -21,31 +22,46 @@ type runner struct {
 	args []string
 }
 
+func BuildPlugin(path, pluginPath string) {
+
+	fmt.Println(pluginPath, path)
+	build := exec.Command("go", "build", "-buildmode=plugin", "-o", pluginPath, path)
+	err := build.Run()
+	if err != nil {
+		panic(err)
+	}
+
+	return
+}
+
 func LoadCommandList(arg string) (list map[string]interface{}) {
 	list = config.CmdList
 	// todo 获取文件路径err处理
 	dir, _ := filepath.Abs(filepath.Dir(arg))
-	// todo 操作系统判断，拼接不同的config路径
-	dir = dir + "\\config\\goartisan.go"
+	dir = dir + "/config/goartisan.go"
 	_, err := os.Lstat(dir)
-	//if !os.IsNotExist(err) { //判断文件是否存在
-	// 将config下goartisan.go编译成so文件
 
-	// todo plugin
-	p, err := plugin.Open("./config/goartisan.so")
-	if err != nil {
-		panic(err)
+	//判断./config/goartisan.go文件是否存在
+	// 存在则将其编译成插件
+	if !os.IsNotExist(err) {
+		goPath := os.Getenv("GOPATH")
+		pluginPath := goPath + "/bin/goartisan.so"
+		BuildPlugin(dir, pluginPath)
+		// todo plugin
+		p, err := plugin.Open(pluginPath)
+		if err != nil {
+			panic(err)
+		}
+		cl, err := p.Lookup("CommandList")
+		if err != nil {
+			panic(err)
+		}
+		res := cl.(*map[string]interface{})
+		for k, v := range *res {
+			list[k] = v
+		}
+		fmt.Println(list)
 	}
-	cl, err := p.Lookup("CommandList")
-	if err != nil {
-		panic(err)
-	}
-	res := cl.(*map[string]interface{})
-	for k, v := range *res {
-		list[k] = v
-	}
-	fmt.Println(list)
-	//}
 	return
 }
 
