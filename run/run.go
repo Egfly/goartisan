@@ -2,7 +2,6 @@ package run
 
 import (
 	"flag"
-	"fmt"
 	"github.com/Egfly/goartisan/config"
 	"io"
 	"os"
@@ -23,8 +22,6 @@ type runner struct {
 }
 
 func BuildPlugin(path, pluginPath string) {
-
-	fmt.Println(pluginPath, path)
 	build := exec.Command("go", "build", "-buildmode=plugin", "-o", pluginPath, path)
 	err := build.Run()
 	if err != nil {
@@ -60,7 +57,7 @@ func LoadCommandList(arg string) (list map[string]interface{}) {
 		for k, v := range *res {
 			list[k] = v
 		}
-		fmt.Println(list)
+
 	}
 	return
 }
